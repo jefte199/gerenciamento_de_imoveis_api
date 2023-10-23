@@ -5,7 +5,7 @@ import { ImoveisController } from '../Controllers/ImoveisController';
 export const routes = Router();
 
 // Rota para teste 
-routes.get('/', getWelcomeMessage.index)
+routes.get('/imoveis', getWelcomeMessage.index)
 routes.get('/imoveis/getAll', ImoveisController.index)
 routes.get('/imoveis/getOne/:id', ImoveisController.show)
 routes.post('/imoveis/create', ImoveisController.store)
