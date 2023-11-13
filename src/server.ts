@@ -1,8 +1,8 @@
-import express from 'express';
-import { routes } from './routes';
 import cors from 'cors';
 import { env } from './env';
-import { connect } from './database'; 
+import express from 'express';
+import { routes } from './routes';
+import { connect } from './database';
 
 const app = express();
 connect();

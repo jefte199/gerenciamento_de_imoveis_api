@@ -1,161 +1,123 @@
+import { Imoveis } from '../../model';
 import { Request, Response } from 'express';
-import { Imoveis } from "../../model";
+
+const extractImovelData = ({ body }: Request) => {
+  const {
+    area,
+    price,
+    rooms,
+    rented,
+    garage,
+    address,
+    comment,
+    newHouse,
+    bathroom,
+    imageUrls,
+    typeHouse,
+    contactName,
+    contactEmail,
+    neighborhood,
+    contactPhone,
+    selectedDate,
+    contactAddress,
+  } = body;
+
+  return {
+    area,
+    rooms,
+    price,
+    rented,
+    garage,
+    address,
+    comment,
+    newHouse,
+    bathroom,
+    imageUrls,
+    typeHouse,
+    contactName,
+    contactEmail,
+    neighborhood,
+    contactPhone,
+    selectedDate,
+    contactAddress,
+  };
+};
 
 export const ImoveisController = {
-  // Função para criar um novo Imovel
   store: async (req: Request, res: Response) => {
     try {
-      const {
-        rented,
-        area,
-        address,
-        comment,
-        newHouse,
-        price,
-        rooms,
-        imageUrls,
-        garage,
-        typeHouse,
-        bathroom,
-        contactName,
-        contactEmail,
-        neighborhood,
-        contactPhone,
-        selectedDate,
-        contactAddress
-      } = req.body;
+      const imovelData = extractImovelData(req);
 
-      const newImovel = await Imoveis({
-        rented,
-        area,
-        address,
-        comment,
-        newHouse,
-        price,
-        rooms,
-        imageUrls,
-        garage,
-        typeHouse,
-        bathroom,
-        contactName,
-        contactEmail,
-        neighborhood,
-        contactPhone,
-        selectedDate,
-        contactAddress
-      });
-
-      const createdImovel = await newImovel.save();
-
+      const createdImovel = await Imoveis.create(imovelData);
       res.status(201).json(createdImovel);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = 'Failed to create Imovel';
+      res.status(500).json({ message, error: error.message });
     }
   },
 
-  // Função para obter imoveis
   index: async (_req: Request, res: Response) => {
     try {
       const imoveis = await Imoveis.findOne();
-
       res.json(imoveis);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = 'Failed to fetch Imoveis';
+      res.status(500).json({ message, error: error.message });
     }
   },
 
-  // Função para obter um alimento pelo ID
   show: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
+      const imovel = await Imoveis.findById(id);
 
-      const imoveis = await Imoveis.findById(id);
+      const messageNotFound = 'Imovel not found';
+      const message = messageNotFound;
+      if (!imovel) return res.status(404).json({ message });
 
-      if (!imoveis) {
-        return res.status(404).json({ message: "Imovel not found" });
-      }
-
-      res.json(imoveis);
+      res.status(200).json(imovel);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = 'Failed to fetch Imovel';
+      res.status(500).json({ message, error: error.message });
     }
   },
 
-  // Função para atualizar um imovel pelo ID
   update: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const {
-        rented,
-        area,
-        address,
-        comment,
-        newHouse,
-        price,
-        rooms,
-        imageUrls,
-        garage,
-        typeHouse,
-        bathroom,
-        contactName,
-        contactEmail,
-        neighborhood,
-        contactPhone,
-        selectedDate,
-        contactAddress
-      } = req.body;
+      const imovelData = extractImovelData(req);
 
-      const updatedImoveis = await Imoveis.findByIdAndUpdate(
+      const updateOptions = { new: true };
+      const updatedImovel = await Imoveis.findByIdAndUpdate(
         id,
-        {
-          rented,
-          area,
-          address,
-          comment,
-          newHouse,
-          price,
-          rooms,
-          imageUrls,
-          garage,
-          typeHouse,
-          bathroom,
-          contactName,
-          contactEmail,
-          neighborhood,
-          contactPhone,
-          selectedDate,
-          contactAddress
-        },
-        { new: true }
+        imovelData,
+        updateOptions
       );
 
-      if (!updatedImoveis) {
-        return res.status(404).json({ message: "item not found" });
-      }
+      const messageNotFound = 'Imovel not found';
+      const message = messageNotFound;
+      if (!updatedImovel) return res.status(404).json({ message });
 
-      res.json(updatedImoveis);
+      res.status(200).json(updatedImovel);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = 'Failed to update Imovel';
+      res.status(500).json({ message, error: error.message });
     }
   },
 
-  // Função para excluir imovel pelo ID
   delete: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-
-      const getItem = await Imoveis.findById(id);
-
       const deletedImovel = await Imoveis.findByIdAndDelete(id);
 
-      if (!deletedImovel) {
-        return res.status(404).json({ message: `item not found` });
-      }
+      const messageNotFound = 'Imovel not found';
+      const message = messageNotFound;
+      if (!deletedImovel) return res.status(404).json({ message });
 
-      res.json({ message: `${getItem?.address} deleted successfully` });
+      res.status(204).end();
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const message = 'Failed to delete Imovel';
+      res.status(500).json({ message, error: error.message });
     }
-  }
+  },
 };
-
