@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ImoveisSchema = new mongoose.Schema({
+const HouseSchema = new mongoose.Schema({
   rented: {
     type: String,
     required: true,
@@ -30,8 +30,9 @@ const ImoveisSchema = new mongoose.Schema({
     required: true,
   },
   imageUrls: {
-    type: String,
-    required: true,
+    default: [],
+    required: false,
+    type: [{ imageUrl: String, imageName: String }],
   },
   garage: {
     type: Number,
@@ -62,8 +63,9 @@ const ImoveisSchema = new mongoose.Schema({
     required: true,
   },
   selectedDate: {
+    default: '',
     type: String,
-    required: true,
+    required: false,
   },
   contactAddress: {
     type: String,
@@ -75,4 +77,4 @@ const ImoveisSchema = new mongoose.Schema({
   },
 });
 
-export const Imoveis = mongoose.model('Imoveis', ImoveisSchema);
+export const House = mongoose.model('Houses', HouseSchema);

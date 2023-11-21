@@ -1,8 +1,9 @@
+import { env } from '../env';
 import mongoose from 'mongoose';
 
 export const connect = async () => {
   try {
-    const uri = 'mongodb://localhost/imoveis_api';
+    const uri = env.DATABASE_URL;
 
     await mongoose.connect(uri, { autoIndex: true });
 
@@ -15,7 +16,7 @@ export const connect = async () => {
 export const disconnect = async () => {
   try {
     await mongoose.disconnect();
-    
+
     console.log('Disconnected from MongoDB...');
   } catch (error) {
     console.log('Error disconnecting from MongoDB:', error);
